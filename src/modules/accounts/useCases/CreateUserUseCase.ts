@@ -17,7 +17,7 @@ class CreateUserUseCase {
     username,
     driver_license,
   }: ICreateUserDTO): Promise<void> {
-    const user = await this.userRepository.create({
+    await this.userRepository.create({
       name,
       email,
       password,
