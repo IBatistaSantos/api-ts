@@ -1,13 +1,17 @@
 import { inject, injectable } from "tsyringe";
 
 import { ICreateUserDTO } from "../dtos/ICreateUserDTO";
+import { IHashProvider } from "../provider/HashProvider/IHashProvider";
 import { IUserRepository } from "../repositories/IUserRepository";
 
 @injectable()
 class CreateUserUseCase {
   constructor(
     @inject("UserRepository")
-    private userRepository: IUserRepository
+    private userRepository: IUserRepository,
+
+    @inject("HashProvider")
+    private hashProvider: IHashProvider
   ) {}
 
   public async execute({
@@ -16,10 +20,16 @@ class CreateUserUseCase {
     password,
     driver_license,
   }: ICreateUserDTO): Promise<void> {
+    const userAlreadyExists = await this.userRepository.findByEmail(email);
+
+    if (userAlreadyExists) {
+      throw new Error("Email is already registered");
+    }
+
     await this.userRepository.create({
       name,
       email,
-      password,
+      password: await this.hashProvider.generateHash(password),
       driver_license,
     });
   }
