@@ -1,6 +1,7 @@
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import { AppError } from "../../../../errors/AppError";
 import { IHashProvider } from "../../provider/HashProvider/IHashProvider";
 import { IUserRepository } from "../../repositories/IUserRepository";
 
@@ -31,7 +32,7 @@ class AuthenticateUserUseCase {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error("Email or password incorrect");
+      throw new AppError("Email or password incorrect");
     }
 
     const passwordMatch = await this.hashProvider.compareHash(
@@ -40,7 +41,7 @@ class AuthenticateUserUseCase {
     );
 
     if (!passwordMatch) {
-      throw new Error("Email or password incorrect");
+      throw new AppError("Email or password incorrect");
     }
 
     const token = sign({}, "ee25d099c7aee592e8b7a250c2d67a34", {
