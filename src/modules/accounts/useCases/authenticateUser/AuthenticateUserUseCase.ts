@@ -1,7 +1,7 @@
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
-import { AppError } from "@errors/AppError";
+import { AppError } from "@shared/errors/AppError";
 
 import { IHashProvider } from "../../provider/HashProvider/IHashProvider";
 import { IUserRepository } from "../../repositories/IUserRepository";
