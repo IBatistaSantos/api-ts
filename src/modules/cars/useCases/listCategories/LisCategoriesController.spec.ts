@@ -36,8 +36,8 @@ describe("List Categories Controller ", () => {
     await request(app)
       .post("/categories")
       .send({
-        name: "Category Test",
-        description: "Category Supertest",
+        name: "Category 1",
+        description: "Category1",
       })
       .set({
         Authorization: `Bearer ${token}`,
@@ -47,6 +47,6 @@ describe("List Categories Controller ", () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
     expect(response.body[0]).toHaveProperty("id");
-    expect(response.body[0].name).toEqual("Category Test");
+    expect(response.body[0].name).toEqual("Category 1");
   });
 });
