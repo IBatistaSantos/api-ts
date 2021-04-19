@@ -22,47 +22,59 @@ describe("Create Category Controller ", () => {
   });
 
   afterAll(async () => {
-    await connection.dropDatabase();
-    await connection.close();
+    try {
+      await connection.dropDatabase();
+      await connection.close();
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   it("should be able to create a new category", async () => {
-    const responseToken = await request(app).post("/sessions").send({
-      email: "admin@rentx.com.br",
-      password: "admin",
-    });
-
-    const { token } = responseToken.body;
-    const response = await request(app)
-      .post("/categories")
-      .send({
-        name: "Category 2",
-        description: "Category 2",
-      })
-      .set({
-        Authorization: `Bearer ${token}`,
+    try {
+      const responseToken = await request(app).post("/sessions").send({
+        email: "admin@rentx.com.br",
+        password: "admin",
       });
 
-    expect(response.status).toBe(201);
+      const { token } = responseToken.body;
+      const response = await request(app)
+        .post("/categories")
+        .send({
+          name: "Category 2",
+          description: "Category 2",
+        })
+        .set({
+          Authorization: `Bearer ${token}`,
+        });
+
+      expect(response.status).toBe(201);
+    } catch (error) {
+      Error(error.message);
+    }
   });
 
   it("should not be able to create a new category with  name exists", async () => {
-    const responseToken = await request(app).post("/sessions").send({
-      email: "admin@rentx.com.br",
-      password: "admin",
-    });
-
-    const { token } = responseToken.body;
-    const response = await request(app)
-      .post("/categories")
-      .send({
-        name: "Category 2",
-        description: "Category 2",
-      })
-      .set({
-        Authorization: `Bearer ${token}`,
+    try {
+      const responseToken = await request(app).post("/sessions").send({
+        email: "admin@rentx.com.br",
+        password: "admin",
       });
 
-    expect(response.status).toBe(400);
+      const { token } = responseToken.body;
+      const response = await request(app)
+        .post("/categories")
+        .send({
+          name: "Category 2",
+          description: "Category 2",
+        })
+        .set({
+          Authorization: `Bearer ${token}`,
+        });
+
+      expect(response.status).toBe(400);
+    } catch (error) {
+      Error(error.message);
+    }
   });
 });
