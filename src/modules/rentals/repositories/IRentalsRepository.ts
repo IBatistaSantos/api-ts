@@ -8,6 +8,7 @@ interface IRentalsRepository {
     car_id,
     expect_return_date,
   }: ICreateRentalDTO): Promise<Rental>;
+  findById(id: string): Promise<Rental | undefined>;
   findOpenRentalByCar(car_id: string): Promise<Rental | undefined>;
   findOpenRentalByUser(user_id: string): Promise<Rental | undefined>;
 }
