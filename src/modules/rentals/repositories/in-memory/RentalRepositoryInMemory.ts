@@ -4,6 +4,10 @@ import { Rental } from "@modules/rentals/infra/typeorm/entities/Rental";
 import { IRentalsRepository } from "../IRentalsRepository";
 
 class RentalRepositoryInMemory implements IRentalsRepository {
+  async findByUserId(user_id: string): Promise<Rental[]> {
+    const rentals = this.rentals.filter((rental) => rental.user_id === user_id);
+    return rentals;
+  }
   async findById(id: string): Promise<Rental | undefined> {
     const rental = this.rentals.find((car) => car.id === id);
     return rental;
