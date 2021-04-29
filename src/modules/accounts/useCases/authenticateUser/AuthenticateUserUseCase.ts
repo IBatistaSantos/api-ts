@@ -1,6 +1,9 @@
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import auth from "@config/auth";
+import { IUsersTokens } from "@modules/accounts/repositories/IUsersTokens";
+import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
 import { IHashProvider } from "../../provider/HashProvider/IHashProvider";
@@ -17,6 +20,7 @@ interface IResponse {
     email: string;
   };
   token: string;
+  refresh_token: string;
 }
 
 @injectable()
@@ -26,7 +30,13 @@ class AuthenticateUserUseCase {
     private userRepository: IUserRepository,
 
     @inject("HashProvider")
-    private hashProvider: IHashProvider
+    private hashProvider: IHashProvider,
+
+    @inject("UserTokensRepository")
+    private userTokenRepository: IUsersTokens,
+
+    @inject("DateProvider")
+    private dateProvider: IDateProvider
   ) {}
 
   async execute({ email, password }: IRequest): Promise<IResponse> {
@@ -45,9 +55,23 @@ class AuthenticateUserUseCase {
       throw new AppError("Email or password incorrect");
     }
 
-    const token = sign({}, "ee25d099c7aee592e8b7a250c2d67a34", {
+    const token = sign({}, auth.secret_token, {
       subject: user.id,
-      expiresIn: "1d",
+      expiresIn: auth.expires_in_token,
+    });
+
+    const refresh_token = sign({ email }, auth.secret_refresh_token, {
+      subject: user.id,
+      expiresIn: auth.expires_in_refresh_token,
+    });
+
+    const refresh_token_expires_date = this.dateProvider.addDay(
+      auth.expires_in_refresh_token_day
+    );
+    await this.userTokenRepository.create({
+      user_id: user.id,
+      expires_date: refresh_token_expires_date,
+      refresh_token,
     });
 
     const tokenResponse: IResponse = {
@@ -56,6 +80,7 @@ class AuthenticateUserUseCase {
         name: user.name,
         email: user.email,
       },
+      refresh_token,
     };
 
     return tokenResponse;
