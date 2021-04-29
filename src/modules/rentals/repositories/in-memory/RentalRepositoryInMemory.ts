@@ -9,7 +9,7 @@ class RentalRepositoryInMemory implements IRentalsRepository {
     return rentals;
   }
   async findById(id: string): Promise<Rental | undefined> {
-    const rental = this.rentals.find((car) => car.id === id);
+    const rental = this.rentals.find((rental) => rental.id === id);
     return rental;
   }
   rentals: Rental[] = [];
