@@ -1,10 +1,11 @@
 import "reflect-metadata";
+
 import express, { NextFunction, Response, Request } from "express";
 import "express-async-errors";
 import swaggerUi from "swagger-ui-express";
 
 import "../../container";
-
+import "dotenv/config";
 import { AppError } from "@shared/errors/AppError";
 import { router } from "@shared/infra/http/routes";
 import createConnection from "@shared/infra/typeorm";

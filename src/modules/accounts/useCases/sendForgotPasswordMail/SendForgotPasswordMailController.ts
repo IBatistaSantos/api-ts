@@ -12,7 +12,7 @@ class SendForgotPasswordMailController {
     );
 
     await sendForgotPasswordMailUseCase.execute(email);
-    return response.json({ message: "Send Mail with code " });
+    return response.send();
   }
 }
 
