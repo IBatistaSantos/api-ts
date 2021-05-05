@@ -1,14 +1,16 @@
-import fs from "fs";
-import handlebars from "handlebars";
 import nodemail, { Transporter } from "nodemailer";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
-import { IMailProvider, IParamsSendMail } from "../IMailProvider";
+import { IMailTemplateProvider } from "../../MailTemplateProvider/models/IMailTemplateProvider";
+import { IMailProvider, IParamsSendMail } from "../models/IMailProvider";
 
 @injectable()
 class EtherealMailProvider implements IMailProvider {
   private client: Transporter;
-  constructor() {
+  constructor(
+    @inject("MailTemplateProvider")
+    private mailTemplateProvider: IMailTemplateProvider
+  ) {
     nodemail
       .createTestAccount()
       .then((account) => {
@@ -32,15 +34,11 @@ class EtherealMailProvider implements IMailProvider {
     variables,
     path,
   }: IParamsSendMail): Promise<void> {
-    const templateFileContent = fs.readFileSync(path).toString("utf-8");
-    const templateParse = handlebars.compile(templateFileContent);
-    const templateHTML = templateParse(variables);
-
     const message = await this.client.sendMail({
       to,
       from: "Rentx <noreplay@rentx.com.br>",
       subject,
-      html: templateHTML,
+      html: await this.mailTemplateProvider.parse({ file: path, variables }),
     });
 
     console.log("Message sent: %s", message.messageId);

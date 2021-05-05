@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IHashProvider } from "@modules/accounts/provider/HashProvider/IHashProvider";
 import { IUserRepository } from "@modules/accounts/repositories/IUserRepository";
 import { IUsersTokens } from "@modules/accounts/repositories/IUsersTokens";
-import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { IDateProvider } from "@shared/container/providers/DateProvider/models/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
 interface IRequest {
