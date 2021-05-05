@@ -12,7 +12,7 @@ interface IUsersTokens {
     user_id: string,
     refresh_token: string
   ): Promise<UserToken | undefined>;
-
+  findByRefreshToken(refresh_token: string): Promise<UserToken | undefined>;
   deleteById(id: string): Promise<void>;
 }
 
