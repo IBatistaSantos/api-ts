@@ -1,6 +1,8 @@
 import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
 import { FakeHashProvider } from "@modules/accounts/provider/HashProvider/fakes/FakeHashProvider";
 import { UserRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UserRepositoryInMemory";
+import { UserTokensRepositoryInMemory } from "@modules/accounts/repositories/in-memory/UserTokenRepositoryInMemory";
+import { DayjsDateProvider } from "@shared/container/providers/DateProvider/implementations/DayjsDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
 import { CreateUserUseCase } from "../createUser/CreateUserUseCase";
@@ -10,14 +12,20 @@ let authenticateUserUseCase: AuthenticateUserUseCase;
 let userRepositoryInMemory: UserRepositoryInMemory;
 let createUser: CreateUserUseCase;
 let hashPorvider: FakeHashProvider;
+let userTokenRepositoryInMemory: UserTokensRepositoryInMemory;
+let dateProvider: DayjsDateProvider;
 describe("AuthenticateUse", () => {
   beforeEach(() => {
     userRepositoryInMemory = new UserRepositoryInMemory();
+    userTokenRepositoryInMemory = new UserTokensRepositoryInMemory();
     hashPorvider = new FakeHashProvider();
+    dateProvider = new DayjsDateProvider();
     createUser = new CreateUserUseCase(userRepositoryInMemory, hashPorvider);
     authenticateUserUseCase = new AuthenticateUserUseCase(
       userRepositoryInMemory,
-      hashPorvider
+      hashPorvider,
+      userTokenRepositoryInMemory,
+      dateProvider
     );
   });
   it("should be able to authenticate an user", async () => {
